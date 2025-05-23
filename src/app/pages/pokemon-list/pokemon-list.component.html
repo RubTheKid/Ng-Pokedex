@@ -1,0 +1,20 @@
+<div class="container mx-auto p-4">
+    <h1 class="text-3xl font-bold mb-6">Pokemon List</h1>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full">
+        @for (pokemon of pokemons; track pokemon.id) {
+        <app-pokemon-card [pokemon]="pokemon"></app-pokemon-card>
+        }
+    </div>
+
+    <div class="flex justify-center gap-4 mt-8">
+        <button (click)="previousPage()" [disabled]="!hasPreviousPage"
+            class="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300">
+            Previous
+        </button>
+        <button (click)="nextPage()" [disabled]="!hasNextPage"
+            class="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300">
+            Next
+        </button>
+    </div>
+</div>
