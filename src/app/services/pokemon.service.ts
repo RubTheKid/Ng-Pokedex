@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { Pokemon } from '../interfaces/pokemon.interface';
+import { MoveDetails } from '../interfaces/move-details.interface';
 
 @Injectable({
     providedIn: 'root'
@@ -31,5 +32,13 @@ export class PokemonService {
 
     getPokemonByName(name: string): Observable<Pokemon> {
         return this.http.get<Pokemon>(`${this.baseUrl}/pokemon/${name.toLowerCase()}`);
+    }
+
+    getMoveDetails(name: string): Observable<MoveDetails> {
+        return this.http.get<MoveDetails>(`${this.baseUrl}/move/${name}/`);
+    }
+
+    getMultipleMoveDetails(names: string[]): Observable<MoveDetails[]> {
+        return forkJoin(names.map(name => this.getMoveDetails(name)));
     }
 } 

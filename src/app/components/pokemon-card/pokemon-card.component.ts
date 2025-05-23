@@ -1,6 +1,10 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { OnInit } from '@angular/core';
 import { Pokemon } from '../../interfaces/pokemon.interface';
+import { PokemonService } from '../../services/pokemon.service';
+import { MoveDetails } from '../../interfaces/move-details.interface';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'app-pokemon-card',
@@ -10,6 +14,18 @@ import { Pokemon } from '../../interfaces/pokemon.interface';
 })
 export class PokemonCardComponent {
     @Input() pokemon!: Pokemon;
+    moveDetails: MoveDetails[] = [];
+
+    constructor(private pokemonService: PokemonService) { }
+
+    ngOnInit() {
+        const moves = this.pokemon.moves.slice(0, 2);
+        moves.forEach(move => {
+            this.pokemonService.getMoveDetails(move.move.name).subscribe((data: MoveDetails) => {
+                this.moveDetails.push(data);
+            });
+        });
+    }
 
     getCardBackground(): { [key: string]: string } {
         return { backgroundColor: this.getCardColor(this.pokemon.types[0].type.name) };
@@ -91,15 +107,6 @@ export class PokemonCardComponent {
         return `${(this.pokemon.weight / 10).toFixed(1)}kg`;
     }
 
-    getMoveName(): string {
-        return this.pokemon.moves && this.pokemon.moves.length > 0 ? this.pokemon.moves[0].move.name.charAt(0).toUpperCase() + this.pokemon.moves[0].move.name.slice(1) : 'Tackle';
-    }
-
-    getMoveDamage(): number {
-        // Placeholder
-        return 20;
-    }
-
     getFlavorText(): string {
         // Placeholder
         return 'When it is angered, it immediately discharges the energy stored in the pouches in its cheeks.';
@@ -108,4 +115,10 @@ export class PokemonCardComponent {
     getMovesToShow(): string[] {
         return this.pokemon.moves.slice(0, 2).map(m => m.move.name.charAt(0).toUpperCase() + m.move.name.slice(1));
     }
+
+    getMoveDetails(name: string): Observable<MoveDetails> {
+        return this.pokemonService.getMoveDetails(name);
+    }
+
+
 } 
