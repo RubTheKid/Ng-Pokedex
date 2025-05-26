@@ -1,5 +1,5 @@
-<div class="relative w-full max-w-xs mx-auto rounded-2xl shadow-2xl border-4 border-gray-300 p-0 overflow-hidden"
-    [ngStyle]="getCardBackground()">
+<div class="relative w-full max-w-xs mx-auto rounded-2xl shadow-2xl border-4 border-gray-300 p-0 overflow-hidden cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-3xl hover:border-yellow-400"
+    [ngStyle]="getCardBackground()" (click)="onCardClick()">
     <div class="flex items-center justify-between  pt-2 pb-1 bg-gradient-to-r  rounded-t-xl border-b-2">
         <span class="text-xl font-extrabold tracking-wide capitalize text-gray-900 flex-1 text-center">{{
             pokemon.name
@@ -16,10 +16,11 @@
             class="object-contain w-32 h-32" />
     </div>
 
-    <div class="flex justify-between items-center text-xs text-gray-700 px-4 py-1 bg-gray-100 border-y border-gray-200">
-        <span>NO. {{ getPokedexNumber() }} </span>
-        <span> HT: {{ getHeight() }} WT: {{ getWeight() }}</span>
-    </div>
+    <span class="text-xs text-gray-600 px-4 py-1 flex justify-end items-center italic">
+        NO. {{ getPokedexNumber() }}
+    </span>
+
+
     <!-- moves -->
     <div class="px-4 py-3 min-h-[60px] flex flex-col gap-2 border-b border-yellow-200">
         <ng-container *ngFor="let move of moveDetails">
@@ -27,23 +28,28 @@
                 <div class="flex items-center gap-2">
                     <span class="font-bold text-lg text-gray-900">{{ move.name | titlecase }}</span>
                 </div>
-                <span class="font-extrabold text-xl text-gray-900">{{ move.power !== null ? (move.power / 2).toFixed(0)
-                    : '' }}</span>
+                @if (move.power !== null) {
+                <span class="font-extrabold text-xl text-gray-900">{{ move.power.toFixed(0) }}</span>
+                } @else {
+                <span class="text-lg italic text-gray-600">passive</span>
+                }
             </div>
         </ng-container>
     </div>
 
-    <div class="flex justify-between items-center px-4 py-2 text-xs border-b border-t border-gray-200">
-        <div class="flex items-center gap-2">
+    <div class="flex justify-between items-center px-2 py-2 text-xs border-b border-t border-gray-200">
+        <div class="flex items-center gap-1">
             <span class="bg-gray-200 px-2 py-0.5 rounded shadow-inner">weakness</span> <!--placeholder-->
             <span class="bg-orange-200 px-2 py-0.5 rounded shadow-inner">+20</span> <!--placeholder-->
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1">
             <span class="bg-gray-200 px-2 py-0.5 rounded shadow-inner">retreat</span> <!--placeholder-->
             <span class="bg-gray-100 px-2 py-0.5 rounded shadow-inner">★</span> <!--placeholder-->
         </div>
     </div>
-    <div class="px-4 pb-2 pt-1 text-[11px] italic text-gray-600">
-        <span>{{ getFlavorText() }}</span> <!--placeholder-->
+    <div class="px-1 pb-2 pt-1 text-[11px] italic text-gray-600">
+        <div class="flex justify-between items-center text-xs text-gray-700 px-4 py-1">
+            <span> HT: {{ getHeight() }}</span>
+            <span> WT: {{ getWeight() }}</span>
+        </div>
     </div>
-</div>

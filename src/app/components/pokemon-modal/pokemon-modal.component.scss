@@ -1,0 +1,64 @@
+// Modal backdrop animation
+.fixed {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+// Modal content animation
+.bg-white.rounded-lg.shadow-2xl {
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+// Custom scrollbar for modal
+.max-h-\[90vh\]::-webkit-scrollbar {
+    width: 8px;
+}
+
+.max-h-\[90vh\]::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.max-h-\[90vh\]::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.max-h-\[90vh\]::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+// Stat bar animation
+.bg-blue-500 {
+    transition: width 0.8s ease-out;
+}
+
+// Image hover effects
+.bg-white.rounded-lg img {
+    transition: transform 0.2s ease;
+}
+
+.bg-white.rounded-lg:hover img {
+    transform: scale(1.05);
+}

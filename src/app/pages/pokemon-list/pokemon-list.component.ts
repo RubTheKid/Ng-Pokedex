@@ -5,11 +5,13 @@ import { Pokemon } from '../../interfaces/pokemon.interface';
 import { PokemonCardComponent } from '../../components/pokemon-card/pokemon-card.component';
 import { FormsModule } from '@angular/forms';
 import { PokemonHeaderComponent } from "../../components/pokemon-header/pokemon-header.component";
+import { PokemonModalComponent } from "../../components/pokemon-modal/pokemon-modal.component";
+import { forkJoin, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-pokemon-list',
   standalone: true,
-  imports: [CommonModule, PokemonCardComponent, FormsModule, PokemonHeaderComponent],
+  imports: [CommonModule, PokemonCardComponent, FormsModule, PokemonHeaderComponent, PokemonModalComponent],
   templateUrl: './pokemon-list.component.html'
 })
 export class PokemonListComponent implements OnInit {
@@ -20,6 +22,10 @@ export class PokemonListComponent implements OnInit {
   hasNextPage = false;
   hasPreviousPage = false;
   searchTerm: string = '';
+
+  // Modal state
+  selectedPokemon: Pokemon | null = null;
+  isModalOpen = false;
 
   constructor(private pokemonService: PokemonService) { }
 
@@ -33,13 +39,15 @@ export class PokemonListComponent implements OnInit {
       this.hasNextPage = !!response.next;
       this.hasPreviousPage = !!response.previous;
 
-      response.results.forEach(pokemon => {
-        const id = this.extractIdFromUrl(pokemon.url);
-        if (id) {
-          this.pokemonService.getPokemon(id).subscribe(details => {
-            this.pokemons.push(details);
-          });
-        }
+      const pokemonRequests: Observable<Pokemon>[] = response.results
+        .map(pokemon => {
+          const id = this.extractIdFromUrl(pokemon.url);
+          return id ? this.pokemonService.getPokemon(id) : null;
+        })
+        .filter((request): request is Observable<Pokemon> => request !== null);
+
+      forkJoin(pokemonRequests).subscribe(pokemonDetails => {
+        this.pokemons = pokemonDetails;
       });
     });
   }
@@ -86,6 +94,16 @@ export class PokemonListComponent implements OnInit {
     this.offset = 0;
     this.pokemons = [];
     this.loadPokemons();
+  }
+
+  onPokemonCardClick(pokemon: Pokemon): void {
+    this.selectedPokemon = pokemon;
+    this.isModalOpen = true;
+  }
+
+  onModalClose(): void {
+    this.isModalOpen = false;
+    this.selectedPokemon = null;
   }
 
 } 

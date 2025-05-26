@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OnInit } from '@angular/core';
 import { Pokemon } from '../../interfaces/pokemon.interface';
@@ -14,6 +14,7 @@ import { Observable } from 'rxjs';
 })
 export class PokemonCardComponent {
     @Input() pokemon!: Pokemon;
+    @Output() cardClick = new EventEmitter<Pokemon>();
     moveDetails: MoveDetails[] = [];
 
     constructor(private pokemonService: PokemonService) { }
@@ -25,6 +26,10 @@ export class PokemonCardComponent {
                 this.moveDetails.push(data);
             });
         });
+    }
+
+    onCardClick(): void {
+        this.cardClick.emit(this.pokemon);
     }
 
     getCardBackground(): { [key: string]: string } {

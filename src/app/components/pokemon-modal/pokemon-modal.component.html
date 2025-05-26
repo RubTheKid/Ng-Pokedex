@@ -1,0 +1,161 @@
+@if (isOpen && pokemon) {
+<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+    (click)="onBackdropClick($event)">
+    <div class="bg-white rounded-lg shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <!-- Header -->
+        <div class="sticky top-0 bg-white border-b border-gray-200 p-6 flex justify-between items-center rounded-t-lg">
+            <div class="flex items-center gap-4">
+                <h2 class="text-3xl font-bold capitalize text-gray-800">{{ pokemon.name }}</h2>
+                <span class="text-lg text-gray-500">#{{ pokemon.id.toString().padStart(3, '0') }}</span>
+            </div>
+            <button (click)="close()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+        </div>
+
+        <div class="p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="space-y-6">
+                    <!-- Image Gallery -->
+                    <div class="bg-gray-50 rounded-lg p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">Gallery</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            @if (pokemon.sprites.front_default) {
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <img [src]="pokemon.sprites.front_default" [alt]="pokemon.name"
+                                    class="w-full h-24 object-contain">
+                                <p class="text-sm text-gray-600 text-center mt-2">Sprite</p>
+                            </div>
+                            }
+                            @if (pokemon.sprites.other['official-artwork'].front_default) {
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <img [src]="pokemon.sprites.other['official-artwork'].front_default"
+                                    [alt]="pokemon.name" class="w-full h-24 object-contain">
+                                <p class="text-sm text-gray-600 text-center mt-2">Official Art</p>
+                            </div>
+                            }
+                            @if (pokemon.sprites.other.dream_world.front_default) {
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <img [src]="pokemon.sprites.other.dream_world.front_default" [alt]="pokemon.name"
+                                    class="w-full h-24 object-contain">
+                                <p class="text-sm text-gray-600 text-center mt-2">Dream World</p>
+                            </div>
+                            }
+                            @if (pokemon.sprites.other.home.front_default) {
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <img [src]="pokemon.sprites.other.home.front_default" [alt]="pokemon.name"
+                                    class="w-full h-24 object-contain">
+                                <p class="text-sm text-gray-600 text-center mt-2">Home</p>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">Basic Information</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-sm text-gray-600">Height</p>
+                                <p class="text-lg font-medium">{{ (pokemon.height / 10).toFixed(1) }} m</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Weight</p>
+                                <p class="text-lg font-medium">{{ (pokemon.weight / 10).toFixed(1) }} kg</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Base Experience</p>
+                                <p class="text-lg font-medium">{{ pokemon.base_experience }}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Order</p>
+                                <p class="text-lg font-medium">#{{ pokemon.order }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">Types</h3>
+                        <div class="flex gap-2">
+                            @for (typeInfo of pokemon.types; track typeInfo.slot) {
+                            <span class="px-3 py-1 rounded-full text-white text-sm font-medium capitalize"
+                                [style.background-color]="getTypeColor(typeInfo.type.name)">
+                                {{ typeInfo.type.name }}
+                            </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-6">
+                    <div class="bg-gray-50 rounded-lg p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">Base Stats</h3>
+                        <div class="space-y-3">
+                            @for (stat of pokemon.stats; track stat.stat.name) {
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-700">{{ formatStatName(stat.stat.name)
+                                        }}</span>
+                                    <span class="text-sm font-medium text-gray-900">{{ stat.base_stat }}</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                                        [style.width.%]="(stat.base_stat / 255) * 100"></div>
+                                </div>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">Abilities</h3>
+                        <div class="space-y-2">
+                            @for (abilityInfo of pokemon.abilities; track abilityInfo.slot) {
+                            <div class="flex items-center justify-between bg-white rounded-lg p-3 shadow-sm">
+                                <span class="font-medium capitalize">{{ formatAbilityName(abilityInfo.ability.name)
+                                    }}</span>
+                                @if (abilityInfo.is_hidden) {
+                                <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full">Hidden</span>
+                                }
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">Moves</h3>
+                        @if (isLoadingMoves) {
+                        <div class="flex justify-center py-8">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                        </div>
+                        } @else {
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            @for (move of moveDetails; track move.id) {
+                            <div class="bg-white rounded-lg p-3 shadow-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-medium capitalize">{{ move.name.replace('-', ' ') }}</span>
+                                    @if (move.power) {
+                                    <span class="text-sm text-gray-600">{{ move.power }} PWR</span>
+                                    }
+                                </div>
+                                @if (move.type) {
+                                <span
+                                    class="inline-block mt-2 px-2 py-1 rounded-full text-white text-xs font-medium capitalize"
+                                    [style.background-color]="getTypeColor(move.type.name)">
+                                    {{ move.type.name }}
+                                </span>
+                                }
+                            </div>
+                            }
+                        </div>
+                        }
+                        @if (pokemon.moves.length > 4) {
+                        <p class="text-sm text-gray-500 mt-3 text-center">
+                            Showing 4 of {{ pokemon.moves.length }} moves
+                        </p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+}

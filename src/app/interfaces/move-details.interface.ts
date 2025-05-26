@@ -4,4 +4,8 @@ export interface MoveDetails {
     power: number | null;
     accuracy: number | null;
     pp: number;
+    type: {
+        name: string;
+        url: string;
+    };
 }
